@@ -33,6 +33,19 @@ The maintainer currently has access to these providers only, so quota integratio
 
 Native terminal dependencies may require platform-specific C/C++ build tools. Linux desktop mode requires a graphical session.
 
+## Windows release
+
+Download `Pi-Workbench-1.0.0-Windows-x64.exe` from [Releases](https://github.com/KuXuanshen/pi-workbench/releases), then run it. The portable executable does not install Node.js or Pi: both must already be available on `PATH`, and Pi must be configured with the providers you want to use. The executable is not code-signed, so Windows may display a publisher warning.
+
+To build the Windows x64 portable executable from source on Windows:
+
+```bash
+npm install
+npm run dist:win
+```
+
+The resulting executable is written to `dist/`. The desktop interface displays the application version.
+
 ## Getting started
 
 ```bash

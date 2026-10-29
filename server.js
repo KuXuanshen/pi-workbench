@@ -30,7 +30,7 @@ const server = http.createServer(async (req, res) => {
   try {
     if (u.pathname === '/api/catalog' && req.method === 'GET') {
       refreshCatalog();
-      return json(res, 200, { providers: catalog, error: catalogError, settings: config.loadSettings() });
+      return json(res, 200, { providers: catalog, error: catalogError, settings: config.loadSettings(), version: require('./package.json').version });
     }
     if (u.pathname === '/api/settings' && req.method === 'POST') {
       const body = await readBody(req);

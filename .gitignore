@@ -6,3 +6,4 @@ preferences.json
 *.zip
 tmp/
 .DS_Store
+dist/

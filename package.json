@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron desktop.js",
     "web": "node server.js --open",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "dist:win": "electron-builder --win portable --x64"
   },
   "keywords": [],
   "type": "commonjs",
@@ -17,10 +18,44 @@
     "ws": "^8.22.0"
   },
   "devDependencies": {
-    "electron": "^45.1.0"
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0"
   },
   "engines": {
     "node": ">=22"
   },
-  "private": true
+  "private": true,
+  "productName": "Pi Workbench",
+  "build": {
+    "appId": "com.kuxuanshen.piworkbench",
+    "productName": "Pi Workbench",
+    "asar": false,
+    "npmRebuild": false,
+    "electronDist": "node_modules/electron/dist",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "*.js",
+      "*.html",
+      "*.css",
+      "workbench.ico",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "workbench.ico",
+      "artifactName": "Pi-Workbench-${version}-Windows-x64.${ext}"
+    },
+    "portable": {
+      "artifactName": "Pi-Workbench-${version}-Windows-x64.${ext}"
+    }
+  }
 }
