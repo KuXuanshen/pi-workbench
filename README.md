@@ -12,6 +12,16 @@ A local desktop workbench for running multiple [Pi](https://github.com/earendil-
 - **Workspace settings:** choose an existing absolute directory for new sessions. Existing sessions keep their original directory.
 - **Desktop and browser:** use the desktop application or a local browser, with themes, terminal scrolling, and text paste.
 
+## Supported quota and balance providers
+
+| Provider | What the workbench queries |
+| --- | --- |
+| MiniMax | Coding Plan quota, including the China and international endpoints |
+| Zhipu AI / Z.AI | Coding Plan quota, including the China and international endpoints |
+| DeepSeek | Available account balance |
+
+The maintainer currently has access to these providers only, so quota integrations started with them. Contributions for other providers are welcome through issues or pull requests. Endpoint availability and credential requirements vary by provider; the international endpoints have not yet been verified with the maintainer's accounts.
+
 ## Requirements
 
 | Requirement | Details |
