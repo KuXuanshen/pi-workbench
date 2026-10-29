@@ -1,0 +1,26 @@
+{
+  "name": "pi-workbench",
+  "version": "1.0.0",
+  "description": "Local multi-session workbench for Pi coding agent",
+  "main": "desktop.js",
+  "scripts": {
+    "start": "electron desktop.js",
+    "web": "node server.js --open",
+    "test": "node --test test/*.test.js"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "dependencies": {
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
+    "node-pty": "^1.1.0",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "electron": "^45.1.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "private": true
+}

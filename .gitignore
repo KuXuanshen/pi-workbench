@@ -1,0 +1,8 @@
+node_modules/
+preferences.json
+.env
+.env.*
+*.log
+*.zip
+tmp/
+.DS_Store
