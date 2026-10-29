@@ -47,6 +47,20 @@ const server = http.createServer(async (req, res) => {
       config.saveSettings(settings);
       return json(res, 200, settings);
     }
+    if (u.pathname === '/api/thinking-levels' && req.method === 'GET') {
+      const providerId = u.searchParams.get('provider');
+      const modelId = u.searchParams.get('model');
+      let providers = catalog;
+      if (providerId || modelId) {
+        const provider = catalog.find(p => p.id === providerId);
+        const model = provider?.models.find(m => m.id === modelId);
+        if (!model) return json(res, 400, { error: '无效的模型' });
+        providers = [{ ...provider, models: [model] }];
+      }
+      const settings = config.loadSettings();
+      config.validateWorkdir(settings.workdir);
+      return json(res, 200, await config.effectiveThinking(providers, settings));
+    }
     if (u.pathname === '/api/quota' && req.method === 'GET') return json(res, 200, Object.fromEntries(await Promise.all(catalog.map(async p => [p.id, await config.quota(p)]))));
     return json(res, 404, { error: '未找到接口' });
   } catch (error) { return json(res, 400, { error: error.message || '操作失败' }); }

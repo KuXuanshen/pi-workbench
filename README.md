@@ -1,26 +1,29 @@
 # Pi Workbench
 
-Pi Workbench 是一个本地多会话工作台，用来在同一窗口运行多个 [Pi](https://github.com/earendil-works/pi) 编程会话。它从本机 Pi 配置发现可用供应商和模型，支持查看部分供应商的额度、为模型设置默认思考程度，并管理并行终端。
+**English** | [简体中文](README.zh-CN.md)
 
-## 功能
+A local desktop workbench for running multiple [Pi](https://github.com/earendil-works/pi) coding sessions side by side. Pi Workbench discovers the providers and models available in your Pi configuration and lets you manage sessions in one window.
 
-- **多会话**：按模型创建独立的 Pi 终端，自动网格排列；可重命名、拖动调整顺序或最小化到底部停靠栏。最小化后会话继续运行。
-- **模型与额度**：读取 `pi --list-models`，列出 Pi 当前可用的供应商和模型；支持查询 MiniMax、智谱 Coding Plan 的额度以及 DeepSeek 账户余额。
-- **会话设置**：在页面设置新会话的工作目录，并为每个支持思考能力的模型选择默认思考程度。
-- **桌面体验**：提供桌面窗口、四种主题、终端滚轮和文本粘贴；也可在本机浏览器中使用。
+## Features
 
-## 系统要求
+- **Multiple terminals:** create independent sessions, arrange them in a responsive grid, rename or reorder them, and minimize them to a dock without stopping them.
+- **Models and usage:** discover models with `pi --list-models`; display MiniMax and Zhipu Coding Plan quotas and DeepSeek balances when available.
+- **Thinking levels:** show the level resolved by Pi, choose a level for new sessions, or reset the workbench override.
+- **Workspace settings:** choose an existing absolute directory for new sessions. Existing sessions keep their original directory.
+- **Desktop and browser:** use the desktop application or a local browser, with themes, terminal scrolling, and text paste.
 
-| 要求 | 说明 |
+## Requirements
+
+| Requirement | Details |
 | --- | --- |
-| 系统 | Windows、macOS 或 Linux；目前仅在 Windows 实机验证 |
-| Node.js | 22 或更高版本，包含 npm |
-| Pi | 已安装 Pi，且 `pi --version` 与 `pi --list-models` 能在启动工作台的环境中运行 |
-| Pi 认证 | 已通过 Pi 配置所需供应商和认证信息 |
+| Operating system | Windows, macOS, or Linux. Tested on Windows; macOS and Linux still require hands-on verification. |
+| Node.js | Version 22 or later, with npm. |
+| Pi | Install Pi and ensure `pi --version` and `pi --list-models` work in the launch environment. |
+| Authentication | Configure the providers and credentials you want to use in Pi. |
 
-安装原生终端依赖可能需要对应系统的 C/C++ 编译工具；Linux 桌面窗口需要可用的图形会话。
+Native terminal dependencies may require platform-specific C/C++ build tools. Linux desktop mode requires a graphical session.
 
-## 安装和启动
+## Getting started
 
 ```bash
 git clone https://github.com/KuXuanshen/pi-workbench.git
@@ -29,36 +32,38 @@ npm install
 npm start
 ```
 
-桌面窗口默认从 `PATH` 查找 Node.js 和 Pi。如果图形桌面没有继承你的 shell 环境，可从配置好环境的终端执行 `npm start`；也可通过 `PI_WORKBENCH_NODE` 指定 Node.js 可执行文件。
+The desktop application looks for Node.js and Pi on `PATH`. If your graphical desktop does not inherit your shell environment, launch `npm start` from a terminal where both commands work. You can also set `PI_WORKBENCH_NODE` to the Node.js executable.
 
-只使用浏览器时：
+For a local browser instead:
 
 ```bash
 npm run web
 ```
 
-也可以执行 `node server.js`，手动打开终端输出的本机地址。页面需要本地服务，不能只打开 HTML 文件。每次启动生成的地址包含临时访问令牌，请勿分享。
+Alternatively, run `node server.js` and open the printed local address. The page requires the local server; opening the HTML file alone will not work. The address contains a temporary access token. Do not share it.
 
-## 设置和日常使用
+## Usage
 
-1. 点击工作区右上角的设置按钮，填写**已存在的绝对目录**并保存。此目录只影响之后创建的会话。
-2. 在左侧展开供应商，必要时为模型选择默认思考程度，再点击模型旁的 **＋** 创建会话。“跟随 Pi 默认”不会传入 `--thinking`；实际支持的程度由 Pi 和模型决定。
-3. 拖动终端标题栏左侧的手柄调整顺序；点击 **−** 收起到停靠栏，点击停靠卡片恢复。
+1. Select the settings button in the workspace header and save an **existing absolute directory** for new sessions.
+2. Expand a provider. The thinking selector shows Pi's resolved level for the model. Choose a different level if needed and select **＋** to create a session. Select **↺** to remove the workbench override and return to Pi's settings.
+3. Drag the handle in a terminal header to reorder sessions. Select **−** to minimize a session and select its dock card to restore it.
 
-关闭工作台或刷新页面会结束该页面的终端连接。最小化子窗口不会结束会话。
+Pi Workbench queries Pi's RPC state without loading extensions or sending prompts to determine the initial thinking level. Pi applies project and model settings and may limit a requested level to the model's supported levels. An extension loaded in an actual session may subsequently change that level. If the value cannot be determined, the selector reports it as unavailable instead of guessing.
 
-## 配置、认证和安全
+Changing the directory or thinking level affects **new sessions only**. Closing the workbench or refreshing the page ends that page's terminal connections; minimizing a session does not.
 
-- Pi 配置目录遵循 `PI_CODING_AGENT_DIR`；未设置时使用 `~/.pi/agent`。重新打开工作台或刷新页面会重新读取可用模型。
-- Pi 自己管理 API Key 和登录状态。工作台使用 `pi auth print-api-key` 获取支持的供应商的密钥，并仅将其发送到对应的官方额度接口；密钥不会返回给页面或写入工作台配置。其他供应商仍可启动会话，但会显示额度查询暂不支持。某些 OAuth 或其他认证方式可能不能提供额度查询所需的 API Key。
-- 主题、目录和模型默认思考程度存放在 `~/.pi-workbench/settings.json`；可通过 `PI_WORKBENCH_CONFIG_DIR` 指定配置目录。该文件不属于项目源代码。
-- 本地服务只监听 `127.0.0.1`，接口和终端连接受随机令牌保护。Pi 和终端使用启动工作台的用户权限，请只在可信的本机环境中使用。
-- Windows 新会话会设置 `PI_HARDWARE_CURSOR=1` 以改善输入法定位；Pi 自身的显式设置可能覆盖该环境变量。
+## Configuration and security
 
-## 测试
+- Pi's configuration directory follows `PI_CODING_AGENT_DIR`, defaulting to `~/.pi/agent`. Reopen or reload the workbench to discover updated models.
+- Pi manages its own API keys and sign-in state. For supported quota providers, the workbench obtains the relevant key with `pi auth print-api-key` and sends it only to the recognized official quota endpoint. Keys are not returned to the page or saved in workbench settings. Other providers can still launch sessions, but quota lookup is unavailable. Some OAuth or other credential types may not provide an API key for quota lookup.
+- The selected theme, directory, and model-level overrides are stored in `~/.pi-workbench/settings.json`. Set `PI_WORKBENCH_CONFIG_DIR` to use another settings directory. This file is not part of the repository.
+- The server listens only on `127.0.0.1`; API and terminal connections require a random token. Pi and terminal commands run with the operating-system privileges of the user who started the workbench. Use it only in a trusted local environment.
+- New Windows sessions set `PI_HARDWARE_CURSOR=1` to improve input-method positioning. An explicit Pi setting may override it.
+
+## Testing
 
 ```bash
 npm test
 ```
 
-测试覆盖模型清单解析、工作目录校验和各平台的命令参数构造。Windows 上已验证桌面启动、实际 Pi 会话、目录和思考程度设置；macOS 和 Linux 仍需在对应系统上实机验收。
+Automated tests cover model-list parsing, directory validation, platform-specific command construction, and RPC response validation. Desktop startup and real Pi sessions have been verified on Windows. macOS and Linux have not yet been tested on those systems.

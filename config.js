@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { execFileSync } = require('child_process');
+const { execFileSync, spawn } = require('child_process');
 
 const THINKING_LEVELS = ['default', 'off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'];
 const THEMES = ['mint', 'jilan', 'dongqing', 'mist'];
@@ -54,6 +54,63 @@ function parseModelList(text) {
   return [...groups].map(([id, models]) => ({ id, label: id, models }));
 }
 function getCatalog() { return parseModelList(piCommand(['--list-models'])); }
+
+function parseThinkingResponse(line) {
+  try {
+    const message = JSON.parse(line);
+    const level = message.data?.thinkingLevel;
+    return message.id === 'workbench-thinking' && message.success === true && THINKING_LEVELS.includes(level) && level !== 'default' ? level : null;
+  } catch { return null; }
+}
+// Ask Pi itself: its startup logic merges project settings and clamps model capabilities.
+// These probes do not send prompts, load extensions or create persisted sessions.
+function probeThinking(provider, model, cwd, override) {
+  return new Promise(resolve => {
+    const args = ['--mode', 'rpc', '--provider', provider, '--model', model, '--no-session', '--no-extensions', '--no-skills', '--no-mcp', '--offline'];
+    if (override && override !== 'default') args.push('--thinking', override);
+    if (args.some(arg => !/^[\w.\/:@+-]+$/.test(arg))) return resolve(null);
+    const executable = process.platform === 'win32' ? (process.env.ComSpec || 'cmd.exe') : 'pi';
+    const childArgs = process.platform === 'win32' ? ['/d', '/s', '/c', ['pi.cmd', ...args].join(' ')] : args;
+    let child;
+    try { child = spawn(executable, childArgs, { cwd, windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] }); }
+    catch { return resolve(null); }
+    let output = '', done = false;
+    const finish = value => { if (done) return; done = true; clearTimeout(timer); if (!child.killed) child.kill(); resolve(value); };
+    const timer = setTimeout(() => finish(null), 12000);
+    child.on('error', () => finish(null));
+    child.stdin.on('error', () => finish(null));
+    child.stdout.on('data', chunk => {
+      output += chunk.toString('utf8');
+      if (output.length > 1048576) return finish(null);
+      let index;
+      while ((index = output.indexOf('\n')) !== -1) {
+        const line = output.slice(0, index); output = output.slice(index + 1);
+        const level = parseThinkingResponse(line);
+        if (level) return finish(level);
+      }
+    });
+    child.on('exit', () => finish(null));
+    child.stdin.end(JSON.stringify({ id: 'workbench-thinking', type: 'get_state' }) + '\n');
+  });
+}
+async function effectiveThinking(providers, settings) {
+  const tasks = [];
+  for (const provider of providers) for (const model of provider.models) {
+    if (model.reasoning) tasks.push({ provider: provider.id, model: model.id });
+  }
+  const result = {};
+  let next = 0;
+  async function worker() {
+    while (next < tasks.length) {
+      const { provider, model } = tasks[next++];
+      const id = provider + '/' + model;
+      result[id] = await probeThinking(provider, model, settings.workdir, settings.thinking[id]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(4, tasks.length) }, worker));
+  return result;
+}
+
 function getKey(provider) {
   // Pi resolves environment references and its credential store itself. No key is logged or sent to the browser.
   try { return piCommand(['auth', 'print-api-key', '--provider', provider], { stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { return ''; }
@@ -108,4 +165,4 @@ function shellCommand(provider, model, thinking, platform = process.platform) {
   if (platform === 'win32') return { shell: 'powershell.exe', args: ['-NoLogo', '-NoExit', '-Command', `& ${args.map(quotePowerShell).join(' ')}`] };
   return { shell: '/bin/sh', args: ['-c', `exec ${args.map(quoteShell).join(' ')}`] };
 }
-module.exports = { THINKING_LEVELS, THEMES, configDir, settingsDir, loadSettings, saveSettings, validateWorkdir, parseModelList, getCatalog, quota, shellCommand };
+module.exports = { THINKING_LEVELS, THEMES, configDir, settingsDir, loadSettings, saveSettings, validateWorkdir, parseModelList, getCatalog, quota, shellCommand, probeThinking, effectiveThinking, parseThinkingResponse };

@@ -25,3 +25,12 @@ test('为各平台构造隔离参数，默认思考不覆盖 Pi', () => {
   assert.ok(unix.args.at(-1).includes("'provider'\\''quoted'"));
   assert.ok(!unix.args.at(-1).includes('--thinking'));
 });
+
+test('只接受 Pi RPC 的对应成功响应与有效思考程度', () => {
+  const reply = (id, success, level) => JSON.stringify({ id, success, data: { thinkingLevel: level } });
+  assert.equal(config.parseThinkingResponse(reply('workbench-thinking', true, 'high')), 'high');
+  assert.equal(config.parseThinkingResponse(reply('other', true, 'high')), null);
+  assert.equal(config.parseThinkingResponse(reply('workbench-thinking', false, 'low')), null);
+  assert.equal(config.parseThinkingResponse(reply('workbench-thinking', true, 'default')), null);
+  assert.equal(config.parseThinkingResponse('not-json'), null);
+});
