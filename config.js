@@ -6,6 +6,7 @@ const { execFileSync, spawn } = require('child_process');
 
 const THINKING_LEVELS = ['default', 'off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'];
 const THEMES = ['mint', 'jilan', 'dongqing', 'mist'];
+const LANGUAGES = ['zh-CN', 'en'];
 const configDir = process.env.PI_CODING_AGENT_DIR || path.join(os.homedir(), '.pi', 'agent');
 const settingsDir = process.env.PI_WORKBENCH_CONFIG_DIR || path.join(os.homedir(), '.pi-workbench');
 const settingsFile = path.join(settingsDir, 'settings.json');
@@ -14,7 +15,7 @@ const defaultSettings = () => ({ theme: 'mint', workdir: os.homedir(), thinking:
 function readJson(file, fallback = {}) { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; } }
 function loadSettings() {
   const raw = readJson(settingsFile, readJson(legacySettings));
-  const settings = { theme: raw.theme, workdir: raw.workdir, thinking: raw.thinking };
+  const settings = { theme: raw.theme, workdir: raw.workdir, thinking: raw.thinking, language: LANGUAGES.includes(raw.language) ? raw.language : null };
   if (!THEMES.includes(settings.theme)) settings.theme = 'mint';
   if (typeof settings.workdir !== 'string' || !path.isAbsolute(settings.workdir)) settings.workdir = os.homedir();
   if (!settings.thinking || typeof settings.thinking !== 'object' || Array.isArray(settings.thinking)) settings.thinking = {};
@@ -165,4 +166,4 @@ function shellCommand(provider, model, thinking, platform = process.platform) {
   if (platform === 'win32') return { shell: 'powershell.exe', args: ['-NoLogo', '-NoExit', '-Command', `& ${args.map(quotePowerShell).join(' ')}`] };
   return { shell: '/bin/sh', args: ['-c', `exec ${args.map(quoteShell).join(' ')}`] };
 }
-module.exports = { THINKING_LEVELS, THEMES, configDir, settingsDir, loadSettings, saveSettings, validateWorkdir, parseModelList, getCatalog, quota, shellCommand, probeThinking, effectiveThinking, parseThinkingResponse };
+module.exports = { THINKING_LEVELS, THEMES, LANGUAGES, configDir, settingsDir, loadSettings, saveSettings, validateWorkdir, parseModelList, getCatalog, quota, shellCommand, probeThinking, effectiveThinking, parseThinkingResponse };

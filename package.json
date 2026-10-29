@@ -1,6 +1,6 @@
 {
   "name": "pi-workbench",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Local multi-session workbench for Pi coding agent",
   "main": "desktop.js",
   "scripts": {
@@ -39,6 +39,7 @@
       "*.js",
       "*.html",
       "*.css",
+      "locales/*.json",
       "workbench.ico",
       "package.json"
     ],

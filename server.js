@@ -17,6 +17,7 @@ function refreshCatalog() {
 }
 refreshCatalog();
 const routes = { '/': ['index.html', 'text/html; charset=utf-8'], '/client.js': ['client.js', 'text/javascript; charset=utf-8'], '/style.css': ['style.css', 'text/css; charset=utf-8'], '/xterm.js': ['node_modules/@xterm/xterm/lib/xterm.js', 'text/javascript'], '/xterm.css': ['node_modules/@xterm/xterm/css/xterm.css', 'text/css'], '/fit.js': ['node_modules/@xterm/addon-fit/lib/addon-fit.js', 'text/javascript'] };
+for (const language of config.LANGUAGES) routes[`/locales/${language}.json`] = [`locales/${language}.json`, 'application/json; charset=utf-8'];
 function json(res, status, data) { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(data)); }
 function readBody(req) { return new Promise((resolve, reject) => { let text = ''; req.on('data', chunk => { text += chunk; if (text.length > 8192) { reject(new Error('请求过大')); req.destroy(); } }); req.on('end', () => { try { resolve(JSON.parse(text)); } catch { reject(new Error('请求格式错误')); } }); req.on('error', reject); }); }
 const server = http.createServer(async (req, res) => {
@@ -37,6 +38,7 @@ const server = http.createServer(async (req, res) => {
       const settings = config.loadSettings();
       if ('workdir' in body) settings.workdir = config.validateWorkdir(body.workdir);
       if ('theme' in body) { if (!config.THEMES.includes(body.theme)) throw new Error('无效主题'); settings.theme = body.theme; }
+      if ('language' in body) { if (!config.LANGUAGES.includes(body.language)) throw new Error('无效语言'); settings.language = body.language; }
       if ('thinking' in body) {
         const { provider, model, level } = body.thinking || {};
         const selected = catalog.find(p => p.id === provider)?.models.find(m => m.id === model);
