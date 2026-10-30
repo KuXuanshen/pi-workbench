@@ -34,7 +34,7 @@ Pi Workbench 是一个本地多会话工作台，用来在同一窗口运行多�
 
 ## Windows 发行版
 
-从 [Releases](https://github.com/KuXuanshen/pi-workbench/releases) 下载并运行 `Pi-Workbench-1.1.0-Windows-x64.exe`。该便携程序不会安装 Node.js 或 Pi：运行前仍需在本机安装两者、确保命令在 `PATH` 中可用，并在 Pi 中配置所需供应商。程序未进行代码签名，Windows 可能显示发布者提示。
+从 [Releases](https://github.com/KuXuanshen/pi-workbench/releases) 下载并运行 `Pi-Workbench-1.2.0-Windows-x64.exe`。该便携程序不会安装 Node.js 或 Pi：运行前仍需在本机安装两者、确保命令在 `PATH` 中可用，并在 Pi 中配置所需供应商。程序未进行代码签名，Windows 可能显示发布者提示。
 
 在 Windows 上从源码构建 x64 便携程序：
 

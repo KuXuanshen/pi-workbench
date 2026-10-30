@@ -35,7 +35,7 @@ Native terminal dependencies may require platform-specific C/C++ build tools. Li
 
 ## Windows release
 
-Download `Pi-Workbench-1.1.0-Windows-x64.exe` from [Releases](https://github.com/KuXuanshen/pi-workbench/releases), then run it. The portable executable does not install Node.js or Pi: both must already be available on `PATH`, and Pi must be configured with the providers you want to use. The executable is not code-signed, so Windows may display a publisher warning.
+Download `Pi-Workbench-1.2.0-Windows-x64.exe` from [Releases](https://github.com/KuXuanshen/pi-workbench/releases), then run it. The portable executable does not install Node.js or Pi: both must already be available on `PATH`, and Pi must be configured with the providers you want to use. The executable is not code-signed, so Windows may display a publisher warning.
 
 To build the Windows x64 portable executable from source on Windows:
 
