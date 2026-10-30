@@ -2,102 +2,65 @@
 
 [English](README.md) | **简体中文**
 
-Pi Workbench 是一个本地多会话工作台，用来在同一窗口运行多个 [Pi](https://github.com/earendil-works/pi) 编程会话。它从本机 Pi 配置发现可用供应商和模型，支持查看部分供应商的额度、为模型设置默认思考程度，并管理并行终端。
+Pi Workbench 是本地多会话工作台，可在同一窗口并排运行多个 [Pi](https://github.com/earendil-works/pi) 编程终端。2.0 将桌面框架和本地服务迁移到 Tauri 与 Rust，Pi 仍作为本机真实终端进程运行。
 
 ## 功能
 
-- **多会话**：按模型创建独立的 Pi 终端，自动网格排列；可重命名、拖动调整顺序或最小化到底部停靠栏。最小化后会话继续运行。
-- **模型与额度**：读取 `pi --list-models`，列出 Pi 当前可用的供应商和模型；支持查询 MiniMax、智谱 Coding Plan 的额度以及 DeepSeek 账户余额。
-- **会话设置**：在页面设置新会话的工作目录，并为每个支持思考能力的模型选择默认思考程度。
-- **桌面体验**：提供桌面窗口、四种主题、终端滚轮和文本粘贴；也可在本机浏览器中使用。
+- 创建独立 Pi 会话并自适应网格排列；支持拖动排序、重命名、最小化和恢复，最小化不会结束进程。
+- 发现 Pi 已配置的供应商和模型，支持模型收藏、最近使用及模型默认思考程度。
+- 查询已支持供应商的额度，显示刷新状态，并按需检查本机运行环境。
+- 设置新会话工作目录、主题和中英文界面；终端中的 HTTP(S) 链接通过系统浏览器打开。
+- 本地服务仅监听回环地址，每次启动使用独立访问令牌。Pi 凭据保留在 Pi 配置中，请勿在问题报告中分享。
+
+工作台不保存终端布局，也不替代 Pi 自带的会话历史功能。2.0 桌面版不提供浏览器独立运行模式。
 
 ## 支持查询额度和余额的供应商
 
-| 供应商 | 工作台查询的内容 |
+| 供应商 | 查询内容 |
 | --- | --- |
-| MiniMax | Coding Plan 额度，包含国内和国际接口 |
-| 智谱 AI / Z.AI | Coding Plan 额度，包含国内和国际接口 |
+| MiniMax | Coding Plan 额度，包括国内和国际接口 |
+| 智谱 AI / Z.AI | Coding Plan 额度，包括国内和国际接口 |
 | DeepSeek | 账户可用余额 |
 
-目前只接入这些供应商，是因为本人只有这几种来源。欢迎大家通过 Issue 或 Pull Request 补充其他供应商。接口可用性和凭据要求因供应商而异；国际接口尚未通过本人的账号实测。
+目前只接入这些供应商，是因为本人只有这几种来源。欢迎通过 Issue 或 Pull Request 补充其他供应商。国际接口尚未使用本人的账号验证；具体可用性取决于供应商接口和凭据。
 
-## 系统要求
+## 系统要求与平台状态
 
-| 要求 | 说明 |
-| --- | --- |
-| 系统 | Windows、macOS 或 Linux；目前仅在 Windows 实机验证 |
-| Node.js | 22 或更高版本，包含 npm |
-| Pi | 已安装 Pi，且 `pi --version` 与 `pi --list-models` 能在启动工作台的环境中运行 |
-| Pi 认证 | 已通过 Pi 配置所需供应商和认证信息 |
+- Windows x64，安装 Microsoft Edge WebView2 Runtime、Node.js 22.19 或更高版本和 Pi，并确保启动环境的 `PATH` 能找到 Pi；请先在 Pi 中配置模型和凭据。
+- Windows 版本已在本机测试。Tauri 本身支持 macOS 和 Linux，但本实现**尚未在这两个平台构建或实测**，终端、剪贴板、窗口和进程清理等行为仍需验证。
+- 2.0 使用系统 WebView，Windows 可执行文件不包含 Pi、Node.js 或 WebView2。
 
-安装原生终端依赖可能需要对应系统的 C/C++ 编译工具；Linux 桌面窗口需要可用的图形会话。
+## 下载与使用
 
-## Windows 发行版
+从 [Releases](https://github.com/KuXuanshen/pi-workbench/releases) 下载并运行 `Pi-Workbench-2.0.0-Windows-x64.exe`。它是可直接运行的便携可执行文件，不是安装程序。首次启动时选择界面语言，以后可在设置中更改。
 
-从 [Releases](https://github.com/KuXuanshen/pi-workbench/releases) 下载并运行 `Pi-Workbench-1.2.0-Windows-x64.exe`。该便携程序不会安装 Node.js 或 Pi：运行前仍需在本机安装两者、确保命令在 `PATH` 中可用，并在 Pi 中配置所需供应商。程序未进行代码签名，Windows 可能显示发布者提示。
+该程序未签名，Windows SmartScreen 或智能应用控制可能拦截；构建成功或发布者提示不能保证程序在所有设备上可运行。
 
-在 Windows 上从源码构建 x64 便携程序：
+## 从源码构建与测试
 
-```bash
-npm install
-npm run dist:win
-```
-
-生成的可执行文件位于 `dist/`；桌面界面会显示应用版本。
-
-## 安装和启动
-
-首次启动时选择简体中文或英文，之后可在设置中切换；选择会保存在本机。Pi 终端及供应商返回内容使用其自身的语言设置。
-
-界面翻译分别保存在 [`locales/zh-CN.json`](locales/zh-CN.json) 和 [`locales/en.json`](locales/en.json)。修改文案时请同步更新两个文件，并保留 `{model}`、`{count}` 等占位符。
+安装 Rust、对应平台的 Tauri 构建依赖、Node.js 和 Pi。Windows 构建需要 MSVC C++ 工具链和 Windows SDK。
 
 ```bash
 git clone https://github.com/KuXuanshen/pi-workbench.git
-cd pi-workbench
-npm install
-npm start
-```
-
-桌面窗口默认从 `PATH` 查找 Node.js 和 Pi。如果图形桌面没有继承你的 shell 环境，可从配置好环境的终端执行 `npm start`；也可通过 `PI_WORKBENCH_NODE` 指定 Node.js 可执行文件。
-
-只使用浏览器时：
-
-```bash
-npm run web
-```
-
-也可以执行 `node server.js`，手动打开终端输出的本机地址。页面需要本地服务，不能只打开 HTML 文件。每次启动生成的地址包含临时访问令牌，请勿分享。
-
-## 设置和日常使用
-
-1. 点击工作区右上角的设置按钮，填写**已存在的绝对目录**并保存。此目录只影响之后创建的会话。
-2. 在左侧展开供应商，模型旁直接显示 Pi 解析出的思考程度；需要时可另选程度，再点击 **＋** 创建会话。点击 **↺** 可移除工作台的覆盖设置，恢复 Pi 自身设置。
-3. 拖动终端标题栏左侧的手柄调整顺序；点击 **−** 收起到停靠栏，点击停靠卡片恢复。
-
-关闭工作台或刷新页面会结束该页面的终端连接。最小化子窗口不会结束会话。
-
-工作台通过 Pi 的 RPC 状态读取初始思考程度，不加载扩展，也不发送提示词。Pi 会结合项目和模型配置，并可能将请求的程度调整到模型支持的范围。实际会话中加载的扩展可能随后改变该值。如果无法读取，控件会显示无法确定，不会猜测。
-
-## 配置、认证和安全
-
-- Pi 配置目录遵循 `PI_CODING_AGENT_DIR`；未设置时使用 `~/.pi/agent`。重新打开工作台或刷新页面会重新读取可用模型。
-- Pi 自己管理 API Key 和登录状态。工作台使用 `pi auth print-api-key` 获取支持的供应商的密钥，并仅将其发送到对应的官方额度接口；密钥不会返回给页面或写入工作台配置。其他供应商仍可启动会话，但会显示额度查询暂不支持。某些 OAuth 或其他认证方式可能不能提供额度查询所需的 API Key。
-- 主题、目录和模型默认思考程度存放在 `~/.pi-workbench/settings.json`；可通过 `PI_WORKBENCH_CONFIG_DIR` 指定配置目录。该文件不属于项目源代码。
-- 本地服务只监听 `127.0.0.1`，接口和终端连接受随机令牌保护。Pi 和终端使用启动工作台的用户权限，请只在可信的本机环境中使用。
-- Windows 新会话会设置 `PI_HARDWARE_CURSOR=1` 以改善输入法定位；Pi 自身的显式设置可能覆盖该环境变量。
-
-## 测试
-
-```bash
+cd pi-workbench/tauri
+npm ci
 npm test
+cargo test --release --bin pi-workbench
+cargo build --release --bin pi-workbench
 ```
 
-测试覆盖模型清单解析、工作目录校验、各平台的命令参数构造和 RPC 响应校验。Windows 上已验证桌面启动、实际 Pi 会话、目录和思考程度设置；macOS 和 Linux 仍需在对应系统上实机验收。
+Windows 构建产物位于 `tauri/target/release/pi-workbench.exe`。其他系统需要在相应平台构建并验证。
 
-## 主题来源
+## 设置与隐私
 
-主题设计参数参考 [Interface Atlas 界面图谱](https://atlas.gongfpp.icu)（仅参考设计规格，主题 CSS 均为本项目原创实现）。
+2.0 将设置和模型快捷项保存在 `~/.pi-workbench-v2/`。若相应的 v2 文件不存在，会先读取旧 Tauri 原型的 `~/.pi-workbench-tauri-prototype/`；设置文件还会回退读取 Electron 1.x 的 `~/.pi-workbench/settings.json`。下次修改时写入 v2 目录，不覆盖旧文件。设置 `PI_WORKBENCH_CONFIG_DIR` 可指定目录，此时不读取旧目录。
 
-## 许可协议
+Pi 配置默认位于 `~/.pi/agent`，可使用 Pi 的 `PI_CODING_AGENT_DIR` 覆盖。请勿提交凭据、会话内容、本机配置或构建产物，也不要在报告中粘贴这些信息。
 
-[MIT](LICENSE) © 2026 KuXuanshen
+## 项目路径
+
+代码地图见 [`Index.md`](Index.md)，协作约定见 [`AGENTS.md`](AGENTS.md)。界面文案位于 [`tauri/assets/locales`](tauri/assets/locales)，修改时需同步中英文和占位符。第三方终端组件的许可证保留在 [`tauri/assets`](tauri/assets)。
+
+## 许可证
+
+[MIT](LICENSE)。第三方依赖适用各自的许可证。

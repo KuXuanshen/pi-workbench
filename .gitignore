@@ -7,3 +7,5 @@ preferences.json
 tmp/
 .DS_Store
 dist/
+*.pfx
+*.p12

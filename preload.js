@@ -1,1 +1,0 @@
-const {contextBridge,ipcRenderer}=require('electron');contextBridge.exposeInMainWorld('desktopWindow',{action:(name)=>{if(['minimize','maximize','close','paste'].includes(name))ipcRenderer.send('window-action',name)}});
