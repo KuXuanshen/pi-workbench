@@ -93,3 +93,7 @@ npm test
 ```
 
 测试覆盖模型清单解析、工作目录校验、各平台的命令参数构造和 RPC 响应校验。Windows 上已验证桌面启动、实际 Pi 会话、目录和思考程度设置；macOS 和 Linux 仍需在对应系统上实机验收。
+
+## 许可协议
+
+[MIT](LICENSE) © 2026 KuXuanshen

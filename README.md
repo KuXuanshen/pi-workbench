@@ -94,3 +94,7 @@ npm test
 ```
 
 Automated tests cover model-list parsing, directory validation, platform-specific command construction, and RPC response validation. Desktop startup and real Pi sessions have been verified on Windows. macOS and Linux have not yet been tested on those systems.
+
+## License
+
+[MIT](LICENSE) © 2026 KuXuanshen
