@@ -5,7 +5,7 @@ const os = require('os');
 const { execFileSync, spawn } = require('child_process');
 
 const THINKING_LEVELS = ['default', 'off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'];
-const THEMES = ['mint', 'jilan', 'dongqing', 'mist'];
+const THEMES = ['mint', 'jilan', 'dongqing', 'mist', 'neon', 'aurora'];
 const LANGUAGES = ['zh-CN', 'en'];
 const configDir = process.env.PI_CODING_AGENT_DIR || path.join(os.homedir(), '.pi', 'agent');
 const settingsDir = process.env.PI_WORKBENCH_CONFIG_DIR || path.join(os.homedir(), '.pi-workbench');

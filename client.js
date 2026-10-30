@@ -36,9 +36,9 @@ document.getElementById('refresh').onclick=refresh;window.addEventListener('resi
 const toggle=document.getElementById('sidebar-toggle');const sidebar=document.getElementById('sidebar');toggle.onclick=()=>{const hidden=sidebar.classList.toggle('collapsed');toggle.setAttribute('aria-expanded',String(!hidden));toggle.title=t(hidden?'展开侧边栏':'收起侧边栏');toggle.setAttribute('aria-label',toggle.title);arrange()};
 sidebar.addEventListener('transitionend',arrange);
 
-const themes={mint:{background:'#101722',foreground:'#dce8f3',cursor:'#83e2c2',selectionBackground:'#487d71'},jilan:{background:'#121a31',foreground:'#e5ebfc',cursor:'#a8b6d6',selectionBackground:'#485b88'},dongqing:{background:'#102129',foreground:'#dceff0',cursor:'#8fc2d1',selectionBackground:'#386b76'},mist:{background:'#f4f8fb',foreground:'#243d53',cursor:'#226176',selectionBackground:'#bad0e5'}};
+const themes={mint:{background:'#101722',foreground:'#dce8f3',cursor:'#83e2c2',selectionBackground:'#487d71'},jilan:{background:'#121a31',foreground:'#e5ebfc',cursor:'#a8b6d6',selectionBackground:'#485b88'},dongqing:{background:'#102129',foreground:'#dceff0',cursor:'#8fc2d1',selectionBackground:'#386b76'},mist:{background:'#f4f8fb',foreground:'#243d53',cursor:'#226176',selectionBackground:'#bad0e5'},neon:{background:'#0d1424',foreground:'#d7e6f2',cursor:'#00e5ff',selectionBackground:'#0f4a5a'},aurora:{background:'#100d22',foreground:'#e8e4f8',cursor:'#a58cff',selectionBackground:'#3a3160'}};
 function terminalTheme(){return themes[document.documentElement.dataset.theme]||themes.mint}
-const themeSelect=document.getElementById('theme-select');function applyTheme(name){if(!Object.hasOwn(themes,name))name='mint';document.documentElement.dataset.theme=name;themeSelect.value=name;localStorage.setItem('pi-workbench-theme',name);const t=themes[name];document.querySelector('meta[name=theme-color]').content={mint:'#111b2a',jilan:'#1d2b4b',dongqing:'#17343e',mist:'#deedf6'}[name];for(const s of sessions)s.term.options.theme=t}
+const themeSelect=document.getElementById('theme-select');function applyTheme(name){if(!Object.hasOwn(themes,name))name='mint';document.documentElement.dataset.theme=name;themeSelect.value=name;localStorage.setItem('pi-workbench-theme',name);const t=themes[name];document.querySelector('meta[name=theme-color]').content={mint:'#111b2a',jilan:'#1d2b4b',dongqing:'#17343e',mist:'#deedf6',neon:'#101a2c',aurora:'#1b1638'}[name];for(const s of sessions)s.term.options.theme=t}
 themeSelect.addEventListener('change',()=>{applyTheme(themeSelect.value);saveSettings({theme:themeSelect.value}).catch(()=>{})});applyTheme(localStorage.getItem('pi-workbench-theme')||'mint');
 
 const fullscreenButton=document.getElementById('fullscreen');fullscreenButton.onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{fullscreenButton.title=t('当前窗口不支持全屏')}};document.addEventListener('fullscreenchange',()=>{const on=Boolean(document.fullscreenElement);fullscreenButton.title=t(on?'退出全屏':'全屏显示');fullscreenButton.setAttribute('aria-label',fullscreenButton.title);arrange()});
@@ -56,7 +56,7 @@ function applyLanguage(next){
   label('#sidebar-toggle',sidebar.classList.contains('collapsed')?'展开侧边栏':'收起侧边栏');
   label('#settings-toggle','设置');label('#fullscreen',document.fullscreenElement?'退出全屏':'全屏显示');
   document.getElementById('theme-select').setAttribute('aria-label',t('选择主题'));
-  for(const option of themeSelect.options){const key={mint:'夜幕薄荷',jilan:'霁蓝夜色',dongqing:'东青',mist:'雾蓝浅色'}[option.value];option.textContent=t(key)}
+  for(const option of themeSelect.options){const key={mint:'夜幕薄荷',jilan:'霁蓝夜色',dongqing:'东青',mist:'雾蓝浅色',neon:'霓虹终端',aurora:'极光夜幕'}[option.value];option.textContent=t(key)}
   document.getElementById('directory-input').placeholder=t('输入绝对路径');
   document.getElementById('minimized-dock').setAttribute('aria-label',t('已最小化会话'));
   document.getElementById('language-select').value=next;

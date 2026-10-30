@@ -95,6 +95,10 @@ npm test
 
 Automated tests cover model-list parsing, directory validation, platform-specific command construction, and RPC response validation. Desktop startup and real Pi sessions have been verified on Windows. macOS and Linux have not yet been tested on those systems.
 
+## Theme Credits
+
+Theme designs reference [Interface Atlas](https://atlas.gongfpp.icu) (design parameters only; all theme CSS is original to this project).
+
 ## License
 
 [MIT](LICENSE) © 2026 KuXuanshen
